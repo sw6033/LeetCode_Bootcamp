@@ -21,3 +21,55 @@ print(sol.containsDuplicate([1, 2, 3, 4]))  # Expected output: False
 
 # Test case 3
 print(sol.containsDuplicate([1, 1, 1, 3, 3, 4, 3, 2, 4, 2]))  # Expected output: True
+
+
+#2.Video Stitching(Medium)
+class Solution(object):
+    def videoStitching(self, clips, time):
+        """
+        :type clips: List[List[int]]
+        :type time: int
+        :rtype: int
+        """
+        # Sort clips based on the start time.
+        clips.sort(key=lambda x: x[0])
+        
+        # Initialize variables to track the maximum end time of clips and the count of clips used.
+        max_end, count, curr_end = 0, 0, 0
+        
+        # Iterate through each clip.
+        for start, end in clips:
+            # If the start time of the current clip is greater than the maximum end time we have seen so far,
+            # it means there is a gap, and we cannot cover the whole event.
+            if start > curr_end:
+                # If the start time of the current clip is also greater than the maximum end time of all previous clips,
+                # it means we cannot proceed further, hence return -1.
+                if start > max_end:
+                    return -1
+                # Update the current end to the maximum end we have seen so far and increase the count.
+                curr_end = max_end
+                count += 1
+            
+            # If the current clip can extend the coverage (end time is greater than the current maximum end),
+            # update the maximum end.
+            if end > max_end:
+                max_end = end
+            
+            # If the maximum end time reaches or exceeds the target time, return the count.
+            if max_end >= time:
+                return count + 1
+        
+        # If the end of the loop is reached without covering the entire event, return -1.
+        return -1
+
+# Example test cases
+sol = Solution()
+
+# Test case 1
+print(sol.videoStitching([[0,2],[4,6],[8,10],[1,9],[1,5],[5,9]], 10))  # Expected output: 3
+
+# Test case 2
+print(sol.videoStitching([[0,1],[1,2]], 5))  # Expected output: -1
+
+# Test case 3
+print(sol.videoStitching([[0,1],[6,8],[0,2],[5,6],[0,4],[0,3],[6,7],[1,3],[4,7],[1,4],[2,5],[2,6],[3,4],[4,5],[5,7],[6,9]], 9))  # Expected output: 3
