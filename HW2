@@ -1,0 +1,90 @@
+Question 1
+class Solution:
+    def myAtoi(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        INT_MAX, INT_MIN = 2**31 - 1, -2**31
+        i, n, result = 0, len(s), 0
+        # Remove leading spaces
+        while i < n and s[i] == ' ':
+            i += 1
+        # Check if the string is now empty
+        if i == n:
+            return 0
+        # Check for sign
+        sign = 1
+        if s[i] == '-':
+            sign = -1
+            i += 1
+        elif s[i] == '+':
+            i += 1
+        # Convert number
+        while i < n and s[i].isdigit():
+            digit = int(s[i])
+            # Check for overflow and underflow
+            if result > INT_MAX // 10 or (result == INT_MAX // 10 and digit > INT_MAX % 10):
+                return INT_MAX if sign == 1 else INT_MIN
+            result = result * 10 + digit
+            i += 1
+        return sign * result
+
+# Let's test the class with an example
+sol = Solution()
+print(sol.myAtoi("   -42")) # Expected output: -42
+
+Question 2
+class Solution:
+    def characterReplacement(self, s: str, k: int) -> int:
+        max_len = 0
+        max_count = 0
+        count = {}
+        left = 0
+
+        for right in range(len(s)):
+            count[s[right]] = count.get(s[right], 0) + 1
+            max_count = max(max_count, count[s[right]])
+
+            if right - left + 1 - max_count > k:
+                count[s[left]] -= 1
+                left += 1
+            
+            max_len = max(max_len, right - left + 1)
+        
+        return max_len
+
+# Let's test the class with the examples provided
+sol = Solution()
+print(sol.characterReplacement("ABAB", 2)) # Expected output: 4
+print(sol.characterReplacement("AABABBA", 1)) # Expected output: 4
+
+Question 3
+class Solution:
+    def palindromePairs(self, words):
+        def is_palindrome(check):
+            return check == check[::-1]
+
+        words_map = {word: i for i, word in enumerate(words)}
+        res = []
+        for i, word in enumerate(words):
+            for j in range(len(word) + 1):
+                prefix, suffix = word[:j], word[j:]
+                if is_palindrome(prefix):
+                    back = suffix[::-1]
+                    if back != word and back in words_map:
+                        res.append([words_map[back], i])
+                if j != len(word) and is_palindrome(suffix):
+                    back = prefix[::-1]
+                    if back != word and back in words_map:
+                        res.append([i, words_map[back]])
+        return res
+
+# Example usage:
+sol = Solution()
+words1 = ["abcd","dcba","lls","s","sssll"]
+words2 = ["bat","tab","cat"]
+words3 = ["a",""]
+print(sol.palindromePairs(words1))  # Expected: [[0,1],[1,0],[3,2],[2,4]]
+print(sol.palindromePairs(words2))  # Expected: [[0,1],[1,0]]
+print(sol.palindromePairs(words3))  # Expected: [[0,1],[1,0]]
